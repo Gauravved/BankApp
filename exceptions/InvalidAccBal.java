@@ -1,4 +1,4 @@
-package excetpions.bank;
+package exceptions;
 
 public class InvalidAccBal extends Exception{
 	private double accbal;
@@ -6,8 +6,6 @@ public class InvalidAccBal extends Exception{
 	public InvalidAccBal(double accbal) {
 		this.accbal = accbal;
 	}
-
-	@Override
 	public String toString() {
 		return "Your balance must be atleast 1000 rs. [accbal=" + accbal + " <1000]";
 	}

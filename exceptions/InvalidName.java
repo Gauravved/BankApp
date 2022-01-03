@@ -1,4 +1,4 @@
-package excetpions.bank;
+package exceptions;
 
 public class InvalidName extends Exception {
 	private String name;
@@ -6,8 +6,6 @@ public class InvalidName extends Exception {
 	public InvalidName(String name) {
 		this.name = name;
 	}
-
-	@Override
 	public String toString() {
 		return "Your Name is Invalid [name=" + name + "]";
 	}

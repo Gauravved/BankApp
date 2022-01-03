@@ -1,4 +1,4 @@
-package excetpions.bank;
+package exceptions;
 
 public class InvalidAge extends Exception{
 	private int age;
@@ -7,7 +7,6 @@ public class InvalidAge extends Exception{
 		this.age = age;
 	}
 
-	@Override
 	public String toString() {
 		return "You are a minor  [age=" + age + "] < 18";
 	}

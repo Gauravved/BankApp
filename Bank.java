@@ -1,10 +1,157 @@
-package packages;
+
 import java.util.*;
-import excetpions.bank.*;
-public class BankManager {
+import exceptions.*;
+
+public class Bank {
+
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		BankManager bm = new BankManager();
+		Vector<Customer> cust = new Vector<Customer>();
+		int ch = 0, m = 10, cnt = 0;
+		do {
+			System.out.println("\n1> Create \n2> Display \n3> Search \n4> Transaction \n5> Remove Account \n6> Exit \nEnter your choice:");
+			ch = sc.nextInt();
+			switch (ch) {
+			case 1:
+				System.out.println("How many accounts you want to create? :");
+				int n = sc.nextInt();
+				for (int i = 0; i < n; i++) {
+					Customer custom = bm.Create(cust);
+					if (custom != null) {
+						cust.add(custom);
+						boolean b = false;
+						if (cust.get(cnt).getAge() < 18) {						
+							jointAcc ac = (jointAcc) cust.get(cnt).getAcc();
+							for (int j = 0; j < cust.size(); j++) {
+								if (ac.getAcNo() == cust.get(j).getAcc().getAccNo()) {
+									b = true;
+								}
+							}
+							if (!b) {
+								cust.add(bm.Joint(ac.getName(), ac.getAcNo(), cust));
+								cnt++;
+							}
+							if (cust.get(cnt) == null) {
+								cust.remove(cnt);
+								cnt--;
+								cust.remove(cnt);
+								cnt--;
+							}
+						}
+						cnt++;
+					}
+				}
+				break;
+			case 2:
+				bm.Display(cust);
+				break;
+			case 3:
+				System.out.println("Enter the account number :");
+				int s = sc.nextInt();
+				bm.Search(cust, s);
+				break;
+			case 4:
+				System.out.println("\n\t1> Withdrawl \n\t2> Deposit \n\t3> Transaction history \nEnter your choice:");
+				int ch2 = sc.nextInt();
+				switch (ch2) {
+				case 1:
+					System.out.println("Enter the Account number:");
+					s = sc.nextInt();
+					m = bm.WithDraw(cust, s, m);
+					m++;
+					break;
+				case 2:
+					System.out.println("Enter the Account number:");
+					s = sc.nextInt();
+					m = bm.Deposit(cust, s, m);
+					m++;
+					break;
+				case 3:
+					System.out.println("Enter the Account number:");
+					s = sc.nextInt();
+					bm.Transhist(cust, s);
+					break;
+				default:
+					System.out.println("Invalid choice!!");
+				}
+				break;
+			case 5:
+				bm.rem(cust);
+				break;
+			case 6: 
+				break;
+			default:
+				System.out.println("Invalid choice!!");
+			}
+		} while (ch != 6);
+		System.out.println(
+				"---------------------------------- Thank you for choosing our bank--------------------------------------------");
+		sc.close();
+	}
+
+}
+class Account {
+	protected int accNo;
+	protected String accType;
+	protected double accBal;
+	public Account(int accNo, String accType, double accBal) {
+		this.accNo = accNo;
+		this.accType = accType;
+		this.accBal = accBal;
+	}
+	public int getAccNo() {
+		return accNo;
+	}
+	public void setAccNo(int accNo) {
+		this.accNo = accNo;
+	}
+	public String getAccType() {
+		return accType;
+	}
+	public void setAccType(String accType) {
+		this.accType = accType;
+	}
+	public double getAccBal() {
+		return accBal;
+	}
+	public void setAccBal(double accBal) {
+		this.accBal = accBal;
+	}
+	
+}
+class Address {
+	private String city;
+	private String state;
+	private long pincode;
+	public Address(String city, String state, long pincode) {
+		this.city = city;
+		this.state = state;
+		this.pincode = pincode;
+	}
+	public String getCity() {
+		return city;
+	}
+	public void setCity(String city) {
+		this.city = city;
+	}
+	public String getState() {
+		return state;
+	}
+	public void setState(String state) {
+		this.state = state;
+	}
+	public long getPincode() {
+		return pincode;
+	}
+	public void setPincode(long pincode) {
+		this.pincode = pincode;
+	}
+}
+ class BankManager {
 	Scanner sc = new Scanner(System.in);
 
-	public Customer Create(LinkedList<Customer> c) {
+	public Customer Create(Vector<Customer> c) {
 		Exceptions ex = new Exceptions();
 		System.out.println("Enter Name of the customer:");
 		String name = sc.next();
@@ -176,7 +323,7 @@ public class BankManager {
 		}
 	}
 
-	public Customer Joint(String name, int accno, LinkedList<Customer> cc) {
+	public Customer Joint(String name, int accno, Vector<Customer> cc) {
 		System.out.println("Age of this customer should compulsorily be above 18!!");
 		System.out.println("This account is being created for " + name
 				+ " and account number will compulsorily will be " + accno + " so please enter the same details");
@@ -195,7 +342,7 @@ public class BankManager {
 		return c;
 	}
 
-	public void Display(LinkedList<Customer> cust) {
+	public void Display(Vector<Customer> cust) {
 		if (!cust.isEmpty()) {
 			int i = 0;
 			System.out.println(
@@ -225,7 +372,7 @@ public class BankManager {
 		}
 	}
 
-	public void Search(LinkedList<Customer> cust, int s) {
+	public void Search(Vector<Customer> cust, int s) {
 		if (!cust.isEmpty()) {
 			boolean b = false;
 			for (int i = 0; i < cust.size(); i++) {
@@ -264,7 +411,7 @@ public class BankManager {
 		System.out.println(acc);
 	}
 
-	public int WithDraw(LinkedList<Customer> cust, int acno, int m) {
+	public int WithDraw(Vector<Customer> cust, int acno, int m) {
 		if (!cust.isEmpty()) {
 			boolean b = false;
 			for (int i = 0; i < cust.size(); i++) {
@@ -291,6 +438,16 @@ public class BankManager {
 							cust.get(i).getAcc().setAccBal(cust.get(i).getAcc().getAccBal() - amt);
 							Transaction t = new Transaction(m, new Date(), amt, "Withdraw");
 							cust.get(i).getTr().add(t);
+							System.out.print("Processing");
+							try{
+								for(int z=0;z<3;z++)
+								{
+									Thread.sleep(1000);
+									System.out.print(".");
+								}
+							}catch(Exception em){
+								System.out.println("An error occured");
+							}
 							System.out.println(
 									"\nSrno\t Name \t\tMobile number\t City \t\tState \t\tPincode \tAccount number \t Account type\t Account balance ");
 							System.out.println(
@@ -338,7 +495,7 @@ public class BankManager {
 		return m;
 	}
 
-	public int Deposit(LinkedList<Customer> cust, int acno, int m) {
+	public int Deposit(Vector<Customer> cust, int acno, int m) {
 		if (!cust.isEmpty()) {
 			boolean b = false;
 			for (int i = 0; i < cust.size(); i++) {
@@ -358,6 +515,16 @@ public class BankManager {
 						cust.get(i).getAcc().setAccBal(cust.get(i).getAcc().getAccBal() + amt);
 						Transaction t = new Transaction(m, new Date(), amt, "Deposit   ");
 						cust.get(i).getTr().add(t);
+						System.out.print("Processing");
+						try{
+							for(int z=0;z<3;z++)
+							{
+								Thread.sleep(1000);
+								System.out.print(".");
+							}
+						}catch(Exception em){
+							System.out.println("An error occured");
+						}
 						System.out.println(
 								"\nSrno\t Name \t\tMobile number\t City \t\tState \t\tPincode \tAccount number \t Account type\t Account balance ");
 						System.out.println(
@@ -404,7 +571,7 @@ public class BankManager {
 		return m;
 	}
 
-	public void Transhist(LinkedList<Customer> cust, int acno) {
+	public void Transhist(Vector<Customer> cust, int acno) {
 		if (!cust.isEmpty()) {
 			boolean b = false;
 			for (int i = 0; i < cust.size(); i++) {
@@ -434,7 +601,7 @@ public class BankManager {
 		}
 	}
 
-	public void rem(LinkedList<Customer> cust) {
+	public void rem(Vector<Customer> cust) {
 		if (!cust.isEmpty()) {
 			System.out.println("Enter the account number you want to remove:");
 			int ac = sc.nextInt();
@@ -476,6 +643,251 @@ public class BankManager {
 			System.out.println("No entries done yet!!");
 		}
 
+	}
+
+}
+ class Current extends Account{
+	private String company;
+
+	public Current(int accNo, String accType, double accBal, String company) {
+		super(accNo, accType, accBal);
+		this.company = company;
+	}
+
+	public String getCompany() {
+		return company;
+	}
+
+	public void setCompany(String company) {
+		this.company = company;
+	}
+
+	public String toString() {
+		return getAccNo() + "\t\t"+getAccType() + "\t\t" + getAccBal()+" \tCompany: "+getCompany();
+	}
+}
+class Customer {
+	private String name;
+	private int age;
+	private String custMob;
+	private Account acc;
+	private Address addr;
+	private Vector<Transaction> tr = new Vector<Transaction>();
+	private String pass;
+
+	public Customer(String name,int age, String custMob, Account acc, Address addr) {
+		this.name = name;
+		this.age=age;
+		this.custMob = custMob;
+		this.acc = acc;
+		this.addr = addr;
+		this.pass = this.name.substring(0, 3) +Integer.toString(acc.getAccNo()).substring(0,3);
+	}
+
+	public int getAge() {
+		return age;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+	public String getPass() {
+		return pass;
+	}
+
+	public void setPass(String pass) {
+		this.pass = pass;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getCustMob() {
+		return custMob;
+	}
+
+	public void setCustMob(String custMob) {
+		this.custMob = custMob;
+	}
+
+	public Account getAcc() {
+		return acc;
+	}
+
+	public void setAcc(Account acc) {
+		this.acc = acc;
+	}
+
+	public Address getAddr() {
+		return addr;
+	}
+
+	public void setAddr(Address addr) {
+		this.addr = addr;
+	}
+
+	public Vector<Transaction> getTr() {
+		return tr;
+	}
+
+	public void setTr(Vector<Transaction> tr) {
+		this.tr = tr;
+	}
+
+}
+class Exceptions {
+
+	public void handling(String mob, double acBal) throws InvalidAccBal {
+		try {
+			if (acBal < 1000) {
+				throw new InvalidAccBal(acBal);
+			}
+		} catch (InvalidAccBal e) {
+			throw e;
+		}
+
+	}
+
+	public void ageHandle(int age) throws InvalidAge {
+		try {
+			if (age < 18) {
+				throw new InvalidAge(age);
+			}
+		} catch (InvalidAge e) {
+			throw e;
+		}
+
+	}
+
+	public void mobile(String mob,Vector<Customer> cust) throws Exception {
+		try {
+			if (mob.length() != 10) {
+				throw new InvalidMobile();
+			}
+			long mble = Long.parseLong(mob);
+			for(int i=0;i<cust.size();i++) {
+				if(cust.get(i).getCustMob().equals(mob)) {
+					throw new InvalidMobile();
+				}
+			}
+		} catch (Exception e) {
+			throw e;
+		}
+
+	}
+
+	public void nameexcep(String name) throws InvalidName {
+		try {
+			for (int i = 0; i < name.length(); i++) {
+				char ch = name.charAt(i);
+				if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) {
+
+				} else {
+					throw new InvalidName(name);
+				}
+			}
+		} catch (InvalidName e) {
+			throw e;
+		}
+
+	}
+
+}
+class jointAcc extends Account{
+		private String Name;
+		private int acNo;
+		public jointAcc(int accNo, String accType, double accBal, String name, int acNo) {
+			super(accNo, accType, accBal);
+			Name = name;
+			this.acNo = acNo;
+		}
+		public String getName() {
+			return Name;
+		}
+		public void setName(String name) {
+			Name = name;
+		}
+		public int getAcNo() {
+			return acNo;
+		}
+		public void setAcNo(int acNo) {
+			this.acNo = acNo;
+		}
+
+		public String toString() {
+			return getAccNo() + "\t\t"+getAccType() + "\t\t" + getAccBal()+" \t\tName: "+getName()+"\tAccount no:"+getAcNo();
+		}
+}
+class Savings  extends Account{
+	private float interrate;
+
+	public Savings(int accNo, String accType, double accBal, float interrate) {
+		super(accNo, accType, accBal);
+		this.interrate = interrate;
+	}
+
+	public float getInterrate() {
+		return interrate;
+	}
+
+	public void setInterrate(int interrate) {
+		this.interrate = interrate;
+	}
+
+	public String toString() {
+		return getAccNo() + "\t\t"+getAccType() + "\t\t" + getAccBal()+" \tInterest: "+getInterrate();
+	}
+	
+}
+class Transaction {
+	private int trno;
+	private Date trDate;
+	private double amt;
+	private String tranType;
+
+	public Transaction(int trno, Date trDate, double amt, String tranType) {
+		this.trno = trno;
+		this.trDate = trDate;
+		this.amt = amt;
+		this.tranType = tranType;
+	}
+
+	public String getTranType() {
+		return tranType;
+	}
+
+	public void setTranType(String tranType) {
+		this.tranType = tranType;
+	}
+
+	public int getTrno() {
+		return trno;
+	}
+
+	public void setTrno(int trno) {
+		this.trno = trno;
+	}
+
+	public Date getTrDate() {
+		return trDate;
+	}
+
+	public void setTrDate(Date trDate) {
+		this.trDate = trDate;
+	}
+
+	public double getAmt() {
+		return amt;
+	}
+
+	public void setAmt(double amt) {
+		this.amt = amt;
 	}
 
 }
